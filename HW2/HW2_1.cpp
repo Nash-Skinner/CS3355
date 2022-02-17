@@ -6,17 +6,17 @@ using namespace std;
     Using the pointer of an array until length l
     pass the values from -999 to 999 back to the array
 */
-void fillArray(int* a, int l) {
-    for (int i = 0; i < l; ++i) {
-        a[i] = (rand() % 1998 + (-999));
+void fillArray(int* arr, int length) {
+    for (int i = 0; i < length; ++i) {
+        arr[i] = (rand() % 1998 + (-999));
     }
 }
 
 // Print out an Array.
-void readArray(int A[], int l) {
+void readArray(int arr[], int length) {
     cout << "Reading elements.\n";
-    for (int i = 0; i < l; ++i) {
-        cout << A[i] << " , ";
+    for (int i = 0; i < length; ++i) {
+        cout << arr[i] << " , ";
         if(i != 0 && i % 9 == 0) 
             cout << endl;
     }
@@ -31,13 +31,13 @@ void readArray(int A[], int l) {
         Space Complexity: O(1)
             -No copies of the array
 */
-int iterativeMaxWeight(int A[], int l) {
+int iterativeMaxWeight(int arr[], int length) {
 int maxSum = 0;
-    for(int i = 0; i < l; ++i) {
-        for(int j = i; j <= l; ++j) {  
+    for(int i = 0; i < length; ++i) {
+        for(int j = i; j <= length; ++j) {  
             int sum = 0;
             for(int k = i; k <= j; ++k)
-                sum = sum + A[k];
+                sum = sum + arr[k];
             if(sum > maxSum)
                 maxSum = sum;
         }
@@ -53,30 +53,32 @@ int max(int a, int b, int c) { return max(max(a, b), c); }
  
 // Find the maximum possible sum in arr[] auch that arr[m]
 // is part of it
-int maxCrossingSum(int arr[], int l, int m, int h)
+int maxCrossingSum(int arr[], int left, int middle, int right)
 {
     // Include elements on left of mid.
     int sum = 0;
-    int left_sum = INT_MIN;
-    for (int i = m; i >= l; i--) {
+    int leftSum = INT_MIN;
+    for (int i = middle; i >= left; i--) {
         sum = sum + arr[i];
-        if (sum > left_sum)
-            left_sum = sum;
+        if (sum > leftSum)
+            leftSum = sum;
     }
  
     // Include elements on right of mid
     sum = 0;
-    int right_sum = INT_MIN;
-    for (int i = m + 1; i <= h; i++) {
+    int rightSum = INT_MIN;
+    for (int i = middle + 1; i <= right; i++) {
         sum = sum + arr[i];
-        if (sum > right_sum)
-            right_sum = sum;
+        if (sum > rightSum)
+            rightSum = sum;
     }
  
-    // Return sum of elements on left and right of mid
-    // returning only left_sum + right_sum will fail for
-    // [-2, 1]
-    return max(left_sum + right_sum, left_sum, right_sum);
+    /*
+        Return sum of elements on left and right of mid
+        returning only left_sum + right_sum will fail for
+        [-2, 1]
+    */
+    return max(leftSum + rightSum, leftSum, rightSum);
 }
  
  /*
@@ -87,16 +89,16 @@ int maxCrossingSum(int arr[], int l, int m, int h)
         Space Complexity: O(logn)
             -The recursive stack requires us to copy the array
 
-    Returns sum of maximum sum subarray in aa[l..h]
+    Returns sum of maximum sum subarray in aa[l..r]
 */
-int recursiveMaxWeight(int arr[], int l, int h)
+int recursiveMaxWeight(int arr[], int left, int right)
 {
     // Base Case: Only one element
-    if (l == h)
-        return arr[l];
+    if (left == right)
+        return arr[left];
  
     // Find middle point
-    int m = (l + h) / 2;
+    int middle = (left + right) / 2;
  
     /*  Return maximum of following three possible cases
             a) Maximum subarray sum in left half
@@ -104,9 +106,9 @@ int recursiveMaxWeight(int arr[], int l, int h)
             c) Maximum subarray sum such that the subarray
             crosses the midpoint 
     */
-    return max(recursiveMaxWeight(arr, l, m),
-               recursiveMaxWeight(arr, m + 1, h),
-               maxCrossingSum(arr, l, m, h));
+    return max(recursiveMaxWeight(arr, left, middle),
+               recursiveMaxWeight(arr, middle + 1, right),
+               maxCrossingSum(arr, left, middle, right));
 }
 
 /*
@@ -117,12 +119,12 @@ int recursiveMaxWeight(int arr[], int l, int h)
         Space Complexity: O(1)
             -No copy of the array is necessary. 
 */
-int optimalMaxWeight(int A[], int n) {
+int optimalMaxWeight(int arr[], int length) {
     int currentMax = 0;
     int endingMax = 0;
     
-    for (int i = 0; i < n-1; ++i) {
-        endingMax += A[i];
+    for (int i = 0; i < length-1; ++i) {
+        endingMax += arr[i];
         
         if(endingMax < 0)
             endingMax = 0;
@@ -188,5 +190,6 @@ int main() {
         cout << "Optimal Max Weight: " << optimalMaxWeight(currentArray, length) << endl;
         cout << "Time for optimalMaxWeight: " << (clock() - start) / (double)(CLOCKS_PER_SEC / 1000) << " in milliseconds\n";
     }
+    
     return 0;
 }
