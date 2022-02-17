@@ -5,23 +5,23 @@
 #include <array>
 using namespace std;
 
-const int n = 10;
+const int n = 500;
 
 class ArrayFuctions {
     public:
         array<int, n> myArray;
 
+    // Fill in an Array of length n with values -999 to 999.
     void fillArray() {
             for (int i = 0; i <= n; ++i) {
-                //myArray[i] = (rand() % 1998 + (-999));
-                myArray[i] = (rand() % 10 + (-5));
+                myArray[i] = (rand() % 1998 + (-999));
+                //myArray[i] = (rand() % 10 + (-5));
             }
     }
 
+    // Print out an Array.
     void readArray() {
-        cout << "Reading someArray elements.\n";
-
-        // prefer using size_t for lengths and sizes, instead of int
+        cout << "Reading elements.\n";
         for (int i = 0; i <= n; ++i) {
             cout << myArray[i] << " , ";
             if(i != 0 && i % 10 == 0) {
@@ -30,33 +30,25 @@ class ArrayFuctions {
         }
     }
 
+    // Linear Max Weight anaylysis of subsets of an Array.
     int iterativeMaxWeight() {
+        // If the array is empty there is no weight
         if (myArray.empty()) {
             return 0;
         }
 
-        int bestSum = 0, currentSum = 0;
-        int bestStart = 0, currentStart = 0;
-        int bestEnd = 0, currentEnd = 0;
-        
-        for(int i = 0; i < n; ++i) {
-            if(currentSum <= 0) {
-                currentStart = currentEnd;
-                currentSum = myArray[i];
+        int maxSum = 0;
+        for(int i = 0; i <= n; ++i) {
+            for(int j = i; j <= n; ++j) {  
+                int sum = 0;
+                for(int k = i; k <= j; ++k)
+                    sum = sum + myArray[k];
+                if(sum > maxSum)
+                    maxSum = sum;
             }
-            else {
-                currentSum += myArray[i];
-            }
+        } 
 
-            if(currentSum > bestSum) {
-                bestSum = currentSum;
-                bestStart = currentStart;
-                bestEnd = currentEnd + 1; 
-            }
-        }
-
-        cout << bestSum << " , " << bestStart << " , " << bestEnd << endl;
-        return(bestSum);
+        return(maxSum);
     }
 
     int recursiveMaxWeight() {
