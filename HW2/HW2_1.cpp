@@ -44,47 +44,58 @@ int iterativeMaxWeight(int A[], int l) {
     return(maxSum);
 }
 
-// Compute the Crossing Sum for the function recursive Max Weight
-int maxCrossingSum(int currentArray[], int low, int mid, int r) {
+// A utility function to find maximum of two integers
+int max(int a, int b) { return (a > b) ? a : b; }
+ 
+// A utility function to find maximum of three integers
+int max(int a, int b, int c) { return max(max(a, b), c); }
+ 
+// Find the maximum possible sum in arr[] auch that arr[m]
+// is part of it
+int maxCrossingSum(int arr[], int l, int m, int h)
+{
+    // Include elements on left of mid.
     int sum = 0;
-    int lsum = INT_MIN;
-    for(int i = mid; i > low; --i) {
-        sum = sum + currentArray[i];
-        if (sum > lsum)
-            lsum = sum;
+    int left_sum = INT_MIN;
+    for (int i = m; i >= l; i--) {
+        sum = sum + arr[i];
+        if (sum > left_sum)
+            left_sum = sum;
     }
+ 
+    // Include elements on right of mid
     sum = 0;
-    int rsum = INT_MIN;
-    for(int i = mid+1; i < r; ++i) {
-        sum = sum + currentArray[i];
-        if (sum > rsum)
-            rsum = sum;
+    int right_sum = INT_MIN;
+    for (int i = m + 1; i <= h; i++) {
+        sum = sum + arr[i];
+        if (sum > right_sum)
+            right_sum = sum;
     }
-    return (lsum + rsum);
+ 
+    // Return sum of elements on left and right of mid
+    // returning only left_sum + right_sum will fail for
+    // [-2, 1]
+    return max(left_sum + right_sum, left_sum, right_sum);
 }
-
-// Recursive Max Weight anaylysis of subsets of an Array.
-int recursiveMaxWeight(int A[], int low, int high) {
-    if (low == high)
-        return A[low];
-    else {
-        int mid = low + floor ((high - low)/2);
-        int left_sum = recursiveMaxWeight (A, low, mid);
-        int right_sum = recursiveMaxWeight (A, mid+1, high);
-        int crossing_Sum = maxCrossingSum(A, low, mid, high);
-
-        cout << left_sum << " , " << crossing_Sum << " , " << right_sum << endl;
-
-        if(left_sum > right_sum && left_sum > crossing_Sum) {
-            return left_sum;
-        } 
-        if (right_sum > crossing_Sum){
-            return right_sum;
-        }
-        else{
-            return(crossing_Sum);   
-        }
-    }
+ 
+// Returns sum of maximum sum subarray in aa[l..h]
+int recursiveMaxWeight(int arr[], int l, int h)
+{
+    // Base Case: Only one element
+    if (l == h)
+        return arr[l];
+ 
+    // Find middle point
+    int m = (l + h) / 2;
+ 
+    /* Return maximum of following three possible cases
+            a) Maximum subarray sum in left half
+            b) Maximum subarray sum in right half
+            c) Maximum subarray sum such that the subarray
+       crosses the midpoint */
+    return max(recursiveMaxWeight(arr, l, m),
+               recursiveMaxWeight(arr, m + 1, h),
+               maxCrossingSum(arr, l, m, h));
 }
 
 // Optimal Max Weight anaylysis of subsets of an Array.
@@ -116,10 +127,20 @@ int main() {
         int currentArray[length];
         fillArray(currentArray, length);
 
-        readArray(currentArray, length);
-        cout << iterativeMaxWeight(currentArray, length) << endl;
-        cout << recursiveMaxWeight(currentArray, 0, length - 1) << endl;
-        cout << optimalMaxWeight(currentArray, length) << endl;
+        // readArray(currentArray, length);
+
+        clock_t start;
+        start = clock();
+        cout << "Iterative Max Weight: " << iterativeMaxWeight(currentArray, length) << endl;
+        cout << "Time for iterativeMaxWeight: " << (clock() - start) / (double)(CLOCKS_PER_SEC / 1000) << " in milliseconds\n";
+
+        start = clock();
+        cout << "Recursive Max Weight: " << recursiveMaxWeight(currentArray, 0, length - 1) << endl;
+        cout << "Time for recursiveMaxWeight: " << (clock() - start) / (double)(CLOCKS_PER_SEC / 1000) << " in milliseconds\n";
+
+        start = clock();
+        cout << "Optimal Max Weight: " << optimalMaxWeight(currentArray, length) << endl;
+        cout << "Time for optimalMaxWeight: " << (clock() - start) / (double)(CLOCKS_PER_SEC / 1000) << " in milliseconds\n";
     }
     return 0;
 }
