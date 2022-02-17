@@ -1,10 +1,5 @@
 #include <iostream>
-#include <stdio.h> 
-#include <stdlib.h> 
-#include <time.h>
-#include <array>
-#include <cmath>
-#include <algorithm>
+
 using namespace std;
 
 /*
@@ -126,7 +121,6 @@ int optimalMaxWeight(int A[], int n) {
     int currentMax = 0;
     int endingMax = 0;
     
-    //
     for (int i = 0; i < n-1; ++i) {
         endingMax += A[i];
         
