@@ -35,6 +35,9 @@ void displayArray(int* arr, int n) {
     Function to heapify the tree
     Pre: An arbitrary array length n with known root
     Post: Returns heap_array length n
+
+    Our analysis is on the root case. Meaning every cycle is a new tree downward.
+    So at most we should only be traversing the length of the tree, O (log n).
 */
 void heapify(int* arr, int n, int root) {
     int largest = root; // root is the largest element
